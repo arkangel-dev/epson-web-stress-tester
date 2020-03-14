@@ -1,0 +1,205 @@
+<html>
+
+<!--
+
+                                   ___
+                               ,-""   `.
+                             ,'  _   e )`-._
+                            /  ,' `-._<.===-'
+                           /  /
+                          /  ;
+              _          /   ;
+ (`._    _.-"" ""--..__,'    |
+ <_  `-""                     \
+  <`-                          :
+   (__   <__.                  ;
+     `-.   '-.__.      _.'    /
+        \      `-.__,-'    _,'
+         `._    ,    /__,-'
+            ""._\__,'< <____            I am agent of chaos...
+                 | |  `----.`.                       
+                 | |        \ `.
+                 ; |___      \-``
+                 \   --<
+                  `.`.<
+                    `-'
+
+-->
+
+<head>
+    <title>Printer Test</title>
+    <link href="{{ url_for('static', filename='stylesheets/style.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <meta charset="UTF-8">
+</head>
+
+<body onload="getRandom()">
+    <table align="center" style="width: 100%;" border="0">
+        <tr>
+            <td align="center">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" width="40%">
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="height: 200;">
+                <div style="background-color: #EEE; width: 60%; height: 100%;">
+                    <table border="0">
+                        <tr>
+                            <td colspan="2" align="center">
+                                <h2>Stress Test</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 200px;">
+                                <p>IP Address</p>
+                            </td>
+                            <td>
+                                <input id="stressTestIp" value="192.168.1.227" type="text" minlength="1" maxlength="500" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Number of Lines</label>
+                            </td>
+                            <td>
+                                <input id="stressTestLineCount" type="number" value="50" width="100%">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="1" align="center" style="height: 30px">
+                                <input type="button" onclick="sendStressTest()" value="Send Test" style="width: 100%; height: 100%;">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center" style="height: 430;">
+                <div style="background-color: #EEE; width: 60%; height: 90%;">
+                    <table border="0">
+                        <tr>
+                            <td colspan="3" align="center">
+                                <h2>Data Print Test</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;">
+                                <p>IP Address</p>
+                            </td>
+                            <td style="width: 350px;" colspan="2">
+                                <input id="testDataIp" value="192.168.1.227" type="text" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: top;">
+                                <label>Print Data</label>
+                            </td>
+                            <td colspan="2" align="center" style="height: 200px">
+                                <textarea id="testDataContent" style="width: 100%; height: 100%;"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="1" align="center" style="height: 30px;">
+                                <input onclick="sendContent()" type="button" value="Send Test" style="width: 150; height: 100%;">
+                            </td>
+                            <td>
+                                <input onclick="getRandom()" type="button" value="Load Random Text" style="width: 150; height: 100%;">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <tt>Arkangel © 2020</tt>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        ipaddress = 'http://192.168.1.90' // Change this address of the server that is hosting this application...
+
+        function getRandom() {
+            const Http = new XMLHttpRequest();
+
+            var count = document.getElementById("stressTestLineCount").value;
+            var address = document.getElementById("stressTestIp").value;
+
+            const url = ipaddress + '/randomt'
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = (e) => {
+                // console.log(Http.responseText)
+                document.getElementById("testDataContent").value = Http.responseText;
+            }
+        }
+
+        function sendStressTest() {
+            const Http = new XMLHttpRequest();
+
+            var count = document.getElementById("stressTestLineCount").value;
+            var address = document.getElementById("stressTestIp").value;
+
+            const url = ipaddress + '/printer?ipaddress=' + address + '&action=StressTest&lines=' + count;
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = (e) => {
+                console.log(Http.responseText)
+                    // document.getElementById("debug").value = Http.responseText;
+                if (Http.status == '200') {
+                    done();
+                } else {
+                    failed();
+                }
+            }
+        }
+
+        function sendContent() {
+            const Http = new XMLHttpRequest();
+
+            var content = document.getElementById("testDataContent").value;
+            var address = document.getElementById("testDataIp").value;
+
+            const url = ipaddress + '/printer?ipaddress=' + address + '&action=PrintContent&content=' + content;
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = (e) => {
+                console.log(Http.responseText)
+                    // document.getElementById("debug").value = Http.responseText;
+                if (Http.status == "200") {
+                    done();
+                } else {
+                    failed();
+                }
+            }
+        }
+
+        function done() {
+            var x = document.getElementById("done");
+            x.className = "show";
+            setTimeout(function() {
+                x.className = x.className.replace("show", "snackbar");
+            }, 3000);
+        }
+
+        function failed() {
+            var x = document.getElementById("failed");
+            x.className = "show";
+            setTimeout(function() {
+                x.className = x.className.replace("show", "snackbar");
+            }, 3000);
+        }
+    </script>
+    <div id="done" class="snackbar">Shit didn't hit the fan...</div>
+    <div id="failed" class="snackbar">Shit just hit the fan...</div>
+</body>
+
+</html>
