@@ -9,6 +9,7 @@ h1 {
 
 h2 {
     font-family: main;
+    color: rgb(47, 47, 47);
 }
 
 p {
@@ -17,6 +18,12 @@ p {
 
 label {
     font-family: main;
+    font-size: 14px;
+}
+
+labelsm {
+    font-family: main;
+    font-size: 13px;
 }
 
 

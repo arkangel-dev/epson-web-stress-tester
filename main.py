@@ -30,9 +30,13 @@ def getPrinter():
 		if action:
 			# Print Content
 			if action == "PrintContent":
+				font = request.args.get('font')
+				cutafterPrint = request.args.get('cutAfter')
+				converesc = request.args.get('convertEscape')
 				content = request.args.get('content')
+
 				if content:
-					printer.Print(content)
+					printer.Print(content, converesc, cutafterPrint, font)
 					return "Done"
 				else:
 					return abort(500, description="Needs Argument 'content' : Has to be stirng")
@@ -45,6 +49,32 @@ def getPrinter():
 					return "Done"
 				else:
 					return abort(500, description="Needs argument lines : Has to be of type 'Integer'")
+
+			# Advanced Stress Test
+			if action == "AdvancedStressTest":
+				lines = request.args.get('lines')
+				font = request.args.get('font')
+				inclAlphabet = request.args.get('inalpha')
+				inclNumbers = request.args.get('innumber')
+				inclSpecialChars = request.args.get('inspecialchars')
+				cutafterPrint = request.args.get('cutafter')
+
+				# print("Font " + font)
+				# print("Alphabet " + inclAlphabet)
+				# print("Numbers " + inclNumbers)
+				# print("SpecialChars " + inclSpecialChars)
+				# print("Cut After Print " + cutafterPrint)
+
+				printer.AdvancedStressTest(lines, font, inclAlphabet, inclNumbers, inclSpecialChars, cutafterPrint)
+
+				return "Done"
+
+			else:
+				return abort(500, description="Invalid Command")
+
+
+				
+			
 
 		else:
 			return abort(500, description="Needs argument action : Can be 'PrintContent' | 'StressTest'")
